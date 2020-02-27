@@ -17,12 +17,15 @@ def findSelectedNeigh(neighbors):
             t = np.array([node_info[1] , 1 , node_info[2]])
             x =np.vstack([x, t])
     
-    index = np.argmax(x[:,2])
+    if np.max(x[:,1]) == 1:
+        index = np.argmax(x[:,2])
+    else:
+        index = np.argmax(x[:,1])       
     neighbors = np.array(neighbors)
     return np.where( neighbors[:, 1] == x[index][0])[0][0]
 
 
-def asyn_lpa_communities(G, iter = 5):
+def asyn_lpa_communities(G, iter = 15):
     l = [[n, i, G.nodes[n]['weight']] for i, n in enumerate(G)]
     
     labels  = np.asarray(l)
@@ -38,6 +41,22 @@ def asyn_lpa_communities(G, iter = 5):
             selected_neigh = findSelectedNeigh(neighbors)
             node_info[1] = neighbors[selected_neigh][1]
     print(set(labels[:,1]))
+    community_node_dic = {}
+    for node in list(G.nodes):
+        row = labels[labels[:,0]== node]
+        community = labels[labels[:,1]== row[0][1]]
+        community = community[:,0]
+        community_node_dic[node] = {'community' :community_node_dic}
+    nx.set_node_attributes(G, community_node_dic)
+    community_dic = {}
+    for x in labels[:,1]:
+        community = labels[labels[:,1]== x]
+        community = community[:,0]
+        community_dic[x] = community
+    return G, community_dic
+    
+    
+
             
            
 

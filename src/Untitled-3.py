@@ -25,12 +25,12 @@ from networkx.algorithms.community import greedy_modularity_communities
 # #### clus : true cluster of nodes
 # #### flag : with ground truth or without
 # #### A_ori : original attribute matrix
-
+# Cora O
 # %%
 # data="WebKB_univ"
 # data="citeseer"
-data = "polblog"
-# data = "cora"
+# data = "polblog"
+data = "cora"
 data_path = "/home/sogol/py-workspace/community_detection_1/data/"+data
 S, S_ori, X, true_clus, flag, A_ori = build_graph.build_graph(data_path)
 
@@ -54,6 +54,11 @@ for e in G.edges:
     # _score.update( {e : {'weight' : jaccard_score(n_0_v , n_1_v)}})
 
 nx.set_edge_attributes(G, _score)
+
+GMax = max(nx.connected_components(G), key=len)
+G = G.subgraph(GMax)
+print(len(G.nodes))
+
 # color=nx.get_edge_attributes(G,'weight')
 # for e in G.edges:
 #     print(color[e])
@@ -63,14 +68,14 @@ nx.set_edge_attributes(G, _score)
 
 # %%
 nodes_cent = LaplaceDynamic.lap_cent_weighted(G)
-dic_lc = {i : nodes_cent[i] for i in range(0, len(nodes_cent) ) }
+dic_lc = {i : nodes_cent[i] for i in nodes_cent }
 nx.set_node_attributes(G, dic_lc, 'weight')
-SGL_KB_lpa.asyn_lpa_communities(G)
-# nx.draw(G)
-# plt.draw()
-# plt.show()
-c = list(greedy_modularity_communities(G))
-print(c[0])
+G, communities =SGL_KB_lpa.asyn_lpa_communities(G)
+nx.draw(G)
+plt.draw()
+plt.show()
+# c = list(greedy_modularity_communities(G))
+# print(c[0])
 # %%
 
 
