@@ -12,7 +12,10 @@ import LaplaceDynamic
 import SGL_KB_lpa
 import networkx as nx
 import matplotlib.pyplot as plt
-from networkx.algorithms.community import greedy_modularity_communities
+import matplotlib.colors as mcolors
+from random import shuffle
+import numpy as np
+
 # from sklearn.metrics import jaccard_score
 # from sklearn.metrics.pairwise import cosine_similarity
 
@@ -28,9 +31,9 @@ from networkx.algorithms.community import greedy_modularity_communities
 # Cora O
 # %%
 # data="WebKB_univ"
-# data="citeseer"
+data="citeseer"
 # data = "polblog"
-data = "cora"
+# data = "cora"
 data_path = "/home/sogol/py-workspace/community_detection_1/data/"+data
 S, S_ori, X, true_clus, flag, A_ori = build_graph.build_graph(data_path)
 
@@ -57,7 +60,8 @@ nx.set_edge_attributes(G, _score)
 
 GMax = max(nx.connected_components(G), key=len)
 G = G.subgraph(GMax)
-print(len(G.nodes))
+
+
 
 # color=nx.get_edge_attributes(G,'weight')
 # for e in G.edges:
@@ -68,10 +72,22 @@ print(len(G.nodes))
 
 # %%
 nodes_cent = LaplaceDynamic.lap_cent_weighted(G)
-dic_lc = {i : nodes_cent[i] for i in nodes_cent }
+dic_lc = {i : np.ceil(nodes_cent[i]) for i in nodes_cent }
 nx.set_node_attributes(G, dic_lc, 'weight')
 G, communities =SGL_KB_lpa.asyn_lpa_communities(G)
-nx.draw(G)
+pos = nx.spring_layout(G) #calculate position for each node
+
+nx.draw(G,pos, with_labels=True, labels=nx.get_node_attributes(G,'weight') , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
+
+color_list = list(mcolors.CSS4_COLORS)
+shuffle(color_list)
+
+i=0
+for x in communities:
+    nx.draw_networkx_nodes(G,pos, nodelist=communities[x], node_color=color_list[i])
+    i+=1
+
+
 plt.draw()
 plt.show()
 # c = list(greedy_modularity_communities(G))

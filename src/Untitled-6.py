@@ -17,6 +17,7 @@ import matplotlib.colors as mcolors
 from random import shuffle
 import numpy as np
 from sklearn.metrics import jaccard_score
+import laplacian_centrality
 
 # %% [markdown]
 # ## Create LFR_atrr
@@ -34,7 +35,8 @@ _score = {}
 for e in G.edges:
     n_0_v = G.nodes[e[0]]['attr_vec']
     n_1_v = G.nodes[e[1]]['attr_vec']
-    _score.update( {e : {'weight' : jaccard_score(n_0_v , n_1_v)}})
+    # _score.update( {e : {'weight' : jaccard_score(n_0_v , n_1_v, average='macro')}})
+    _score.update( {e : {'weight' : 1}})
     # _score.update( {e : {'weight' : simple_matching_coeffitient.SMC(n_0_v , n_1_v)}})
 nx.set_edge_attributes(G, _score)
 
@@ -42,6 +44,7 @@ nx.set_edge_attributes(G, _score)
 # ## Calculate Node Laplacian Centrality and applying LPA
 
 # %%
+# nodes_cent = laplacian_centrality.lap_cent_weighted(G, norm=True)
 nodes_cent = LaplaceDynamic.lap_cent_weighted(G, norm=True)
 dic_lc = {i : np.ceil(nodes_cent[i]) for i in nodes_cent }
 nx.set_node_attributes(G, dic_lc, 'weight')

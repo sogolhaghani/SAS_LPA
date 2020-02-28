@@ -17,20 +17,22 @@ def findSelectedNeigh(neighbors):
             t = np.array([node_info[1] , 1 , node_info[2]])
             x =np.vstack([x, t])
     
-    if np.max(x[:,1]) == 1:
-        index = np.argmax(x[:,2])
-    else:
-        index = np.argmax(x[:,1])       
+    # if np.max(x[:,1]) == 1:
+    #     index = np.argmax(x[:,2])
+    # else:
+    #     index = np.argmax(x[:,1]) 
+    index = np.argmax(x[:,2])      
     neighbors = np.array(neighbors)
-    return np.where( neighbors[:, 1] == x[index][0])[0][0]
+    return np.where( neighbors[:, 1] == x[index][0])[0][0] , x[index][2] / x[index][1]
 
 
 def asyn_lpa_communities(G, iter = 15):
     l = [[n, i, G.nodes[n]['weight']] for i, n in enumerate(G)]
     
     labels  = np.asarray(l)
-    labels = labels[labels[:,2].argsort()[::-1]]
     for i in range(0, iter):
+        # print('iteration %s' %(i))
+        labels = labels[labels[:,2].argsort()[::-1]]
         for node_info in labels:
             neighbors = [   [n, 
                             labels[ np.where( labels[:, 0] ==n)[0][0]][1],  
@@ -38,15 +40,22 @@ def asyn_lpa_communities(G, iter = 15):
                         ] 
             if len(neighbors) == 0 :
                 continue
-            selected_neigh = findSelectedNeigh(neighbors)
+            selected_neigh , v = findSelectedNeigh(neighbors)
+            # print('node %s ---> %s' %(node_info[0],  neighbors[selected_neigh][0]))
+
             node_info[1] = neighbors[selected_neigh][1]
-    print(set(labels[:,1]))
+            # if node_info[2] > neighbors[selected_neigh][2]:
+            #     x =  np.where( labels[:, 0] ==neighbors[selected_neigh][0])[0][0]
+            #     labels[x][2] = np.average([v , node_info[2] ])
+            # else:
+            #     node_info[2] = np.average([v , node_info[2] ])
+    print(len(set(labels[:,1])))
     community_node_dic = {}
     for node in list(G.nodes):
         row = labels[labels[:,0]== node]
         community = labels[labels[:,1]== row[0][1]]
         community = community[:,0]
-        community_node_dic[node] = {'community' :community_node_dic}
+        community_node_dic[node] = {'community' :community}
     nx.set_node_attributes(G, community_node_dic)
     community_dic = {}
     for x in labels[:,1]:

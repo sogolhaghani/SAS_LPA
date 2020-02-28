@@ -49,12 +49,12 @@ def lap_cent_weighted(graph, nbunch=None, norm=False, weight='weight'):
     den = float(fe[0]+fe[1])
   else:
     den = 1
-  result = []
+  result = {}
   for i in vs:
      d2 = graph.degree(i,weight=weight)
      w2 = cw(graph,i,weight=weight)
      fin = d2**2 - w2[1] + 2*w2[0]
-     result.append(fin/den)
+     result [i] = (fin/den)
   return result
 
 

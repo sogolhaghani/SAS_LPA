@@ -142,7 +142,7 @@ def lap_cent(graph, nbunch=None, degrees=None, norm=False):
 
 def lap_cent_add_remove_edge(graph, add_list, remove_list, laplacian, degrees=None, norm=False):
 
-    vs = [];
+    vs = []
     for edge in add_list:
         source = edge [0]
         vs.append(source)
