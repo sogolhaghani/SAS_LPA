@@ -56,6 +56,7 @@ def asyn_lpa_communities(G, iter = 15):
         community = labels[labels[:,1]== row[0][1]]
         community = community[:,0]
         community_node_dic[node] = {'community' :community}
+        community_node_dic[node] = {'com' :row[0][1]}
     nx.set_node_attributes(G, community_node_dic)
     community_dic = {}
     for x in labels[:,1]:

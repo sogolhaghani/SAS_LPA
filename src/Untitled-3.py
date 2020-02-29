@@ -15,6 +15,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from random import shuffle
 import numpy as np
+from sklearn.metrics.cluster import normalized_mutual_info_score
 
 # from sklearn.metrics import jaccard_score
 # from sklearn.metrics.pairwise import cosine_similarity
@@ -31,9 +32,9 @@ import numpy as np
 # Cora O
 # %%
 # data="WebKB_univ"
-data="citeseer"
+# data="citeseer"
 # data = "polblog"
-# data = "cora"
+data = "cora"
 data_path = "/home/sogol/py-workspace/community_detection_1/data/"+data
 S, S_ori, X, true_clus, flag, A_ori = build_graph.build_graph(data_path)
 
@@ -43,7 +44,10 @@ S, S_ori, X, true_clus, flag, A_ori = build_graph.build_graph(data_path)
 # %%
 G = nx.Graph(S_ori)
 a_dic = {i : A_ori[i] for i in range(0, len(A_ori) ) }
+a_dic = {i : n for i , n in enumerate(true_clus )}
+
 nx.set_node_attributes(G, a_dic, 'attr_vec')
+nx.set_node_attributes(G, a_dic, 'club')
 
 # %% [markdown]
 # ## Calculate Node Similarity
@@ -75,6 +79,32 @@ nodes_cent = LaplaceDynamic.lap_cent_weighted(G)
 dic_lc = {i : np.ceil(nodes_cent[i]) for i in nodes_cent }
 nx.set_node_attributes(G, dic_lc, 'weight')
 G, communities =SGL_KB_lpa.asyn_lpa_communities(G)
+
+
+
+vec_orig_community = []
+vec_pred_community = []
+clubDict = nx.get_node_attributes(G,'club')
+clubKeys = set(clubDict.values())
+clubKeys = list(clubKeys)
+clubKeys.sort()
+comKeys = set(communities.keys() )
+comKeys = list(comKeys)
+comKeys.sort()
+trans_orig = {n : i for i, n in enumerate(clubKeys) }
+trans_pred = {n : i for i, n in enumerate(comKeys) }
+
+
+for i, n  in enumerate(G):
+    orig = G.nodes[n]['club']    
+    prec = G.nodes[n]['com']
+    vec_orig_community.append(trans_orig[orig])
+    vec_pred_community.append(trans_pred[prec])
+
+nmi = normalized_mutual_info_score(vec_orig_community , vec_pred_community)
+print(nmi)
+
+
 pos = nx.spring_layout(G) #calculate position for each node
 
 nx.draw(G,pos, with_labels=True, labels=nx.get_node_attributes(G,'weight') , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
