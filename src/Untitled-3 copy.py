@@ -16,6 +16,8 @@ import matplotlib.colors as mcolors
 from random import shuffle
 import numpy as np
 from sklearn.metrics.cluster import normalized_mutual_info_score
+from sklearn.metrics import accuracy_score
+
 
 # listOfStr = {1: {'weight' : 84} , 
 # 2: {'weight' : 26} , 
@@ -69,7 +71,9 @@ for  i, n  in enumerate(G):
     vec_pred_community.append(trans_pred[prec])
 
 nmi = normalized_mutual_info_score(vec_orig_community , vec_pred_community)
-print(nmi)
+acc = accuracy_score(vec_orig_community , vec_pred_community)
+print(nmi, acc)
+
 
 
 pos = nx.spring_layout(G) #calculate position for each node
