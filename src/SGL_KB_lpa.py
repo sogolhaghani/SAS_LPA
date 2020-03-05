@@ -49,7 +49,7 @@ def asyn_lpa_communities(G, iter = 5):
             #     labels[x][2] = np.average([v , node_info[2] ])
             # else:
             #     node_info[2] = np.average([v , node_info[2] ])
-    print(len(set(labels[:,1])))
+
     community_node_dic = {}
     for node in list(G.nodes):
         row = labels[labels[:,0]== node]
