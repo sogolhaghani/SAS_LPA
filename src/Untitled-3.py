@@ -21,7 +21,7 @@ from sklearn.metrics import jaccard_score
 
 
 # from sklearn.metrics import jaccard_score
-# from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.metrics.pairwise import cosine_similarity
 
 # %% [markdown]
 # ## Choose data you would like to use
@@ -59,17 +59,21 @@ nx.set_node_attributes(G, c_dic, 'club')
 # ## Calculate Node Similarity
 
 # %%
+
+GMax = max(nx.connected_components(G), key=len)
+G = G.subgraph(GMax)
+
 _score = {}
 for e in G.edges:
     n_0_v = G.nodes[e[0]]['attr_vec']
     n_1_v = G.nodes[e[1]]['attr_vec']
     # _score.update( {e : {'weight' : simple_matching_coeffitient.SMC(n_0_v , n_1_v)}})
-    _score.update( {e : {'weight' : jaccard_score(n_0_v , n_1_v)}})
+    _score.update( {e : {'weight' : cosine_similarity([n_0_v] , [n_1_v])}})
+    # _score.update( {e : {'weight' : jaccard_score(n_0_v , n_1_v)}})
 
 nx.set_edge_attributes(G, _score)
 
-GMax = max(nx.connected_components(G), key=len)
-G = G.subgraph(GMax)
+
 
 
 
