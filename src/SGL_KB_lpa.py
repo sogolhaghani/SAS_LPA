@@ -31,7 +31,7 @@ def asyn_lpa_communities(G, iter = 5):
     
     labels  = np.asarray(l)
     for i in range(0, iter):
-        # print('iteration %s' %(i))
+        print('\n Iteration %s \n ' %(i + 1))
         labels = labels[labels[:,2].argsort()[::-1]]
         for node_info in labels:
             neighbors = [   [n, 
@@ -41,14 +41,18 @@ def asyn_lpa_communities(G, iter = 5):
             if len(neighbors) == 0 :
                 continue
             selected_neigh , v = findSelectedNeigh(neighbors)
-            # print('node %s ---> %s' %(node_info[0],  neighbors[selected_neigh][0]))
+            print('node %s ---> %s' %(node_info[0],  neighbors[selected_neigh][0]))
 
             node_info[1] = neighbors[selected_neigh][1]
-            # if node_info[2] > neighbors[selected_neigh][2]:
-            #     x =  np.where( labels[:, 0] ==neighbors[selected_neigh][0])[0][0]
-            #     labels[x][2] = np.average([v , node_info[2] ])
-            # else:
-            #     node_info[2] = np.average([v , node_info[2] ])
+            if node_info[2] > neighbors[selected_neigh][2]:
+                x =  np.where( labels[:, 0] ==neighbors[selected_neigh][0])[0][0]
+                labels[x][2] = np.average([v , node_info[2] ])
+            else:
+                node_info[2] = np.average([v , node_info[2] ])
+        for node_info in labels:
+            print('node %s, label %s, centrality : %s' %(node_info[0],node_info[1],node_info[2]))        
+
+
 
     community_node_dic = {}
     for node in list(G.nodes):

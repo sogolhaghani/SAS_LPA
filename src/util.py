@@ -6,7 +6,7 @@ def get_key(val, my_dict):
          if val in value: 
              return key 
   
-    return "key doesn't exist"
+    return -1
 
 def convertToResultVec(G, communities, _orig_cluster_dic):
     orig_cluster_dic = {**_orig_cluster_dic}

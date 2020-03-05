@@ -23,7 +23,7 @@ import laplacian_centrality
 # ## Create LFR_atrr
 
 # %%
-f = '/home/sogol/py-workspace/community_detection_1/data/syn-LFREA/miu'
+f = '/home/sogol/py-workspace/SAS_LPA/data/syn-LFREA/miu'
 G = build_lfrea_attr.createAttrLFREA(base_path = f , miu='01')
 GMax = max(nx.connected_components(G), key=len)
 G = G.subgraph(GMax)
@@ -51,7 +51,8 @@ nx.set_node_attributes(G, dic_lc, 'weight')
 G, communities =SGL_KB_lpa.asyn_lpa_communities(G)
 pos = nx.spring_layout(G) #calculate position for each node
 
-nx.draw(G,pos, with_labels=True, labels=nx.get_node_attributes(G,'weight') , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
+nx.draw(G,pos, with_labels=True , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
+# nx.draw(G,pos, with_labels=True, labels=nx.get_node_attributes(G,'weight') , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
 
 color_list = list(mcolors.CSS4_COLORS)
 shuffle(color_list)
