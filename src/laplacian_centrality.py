@@ -59,8 +59,8 @@ def lap_cent_weighted(graph, nbunch=None, norm=False, weight='weight'):
 
 
 # Gp = nx.Graph()
-# ed = [('A','B',4),('A','C',2),('C','B',1),('B','D',2),('B','E',2),('E','F',1)]
+# ed = [('A','B',4),('A','C',2),('C','B',1),('B','D',2),('B','E',2),('E','F',1),('F','G',1),('F','h',1)]
 # Gp.add_weighted_edges_from(ed)
 # xw = lap_cent_weighted(Gp, norm=True)
-# for a,c in zip(Gp.nodes(),xw):
-#     print( a,c )
+# for a in xw:
+#     print( a,xw[a] )

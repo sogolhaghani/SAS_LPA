@@ -16,7 +16,12 @@ import matplotlib.colors as mcolors
 from random import shuffle
 import numpy as np
 from sklearn.metrics.cluster import normalized_mutual_info_score
+from sklearn.metrics.cluster import adjusted_rand_score
 from sklearn.metrics import accuracy_score
+from sklearn.metrics import jaccard_score
+from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.metrics import f1_score
+import util
 
 
 # listOfStr = {1: {'weight' : 84} , 
@@ -50,29 +55,27 @@ nodes_cent = LaplaceDynamic.lap_cent_weighted(G)
 dic_lc = {i : np.ceil(nodes_cent[i]) for i in nodes_cent }
 nx.set_node_attributes(G, dic_lc, 'weight')
 G, communities =SGL_KB_lpa.asyn_lpa_communities(G)
-
-vec_orig_community = []
-vec_pred_community = []
-clubDict = nx.get_node_attributes(G,'club')
-clubKeys = set(clubDict.values())
-clubKeys = list(clubKeys)
-clubKeys.sort()
-comKeys = set(communities.keys() )
-comKeys = list(comKeys)
-comKeys.sort()
-trans_orig = {n : i for i, n in enumerate(clubKeys) }
-trans_pred = {n : i for i, n in enumerate(comKeys) }
+orig_lister_dic = {n : [] for  n in set(nx.get_node_attributes(G, 'club') )}
+for i , n in enumerate(nx.get_node_attributes(G, 'club') ):
+    orig_lister_dic.setdefault(n, []).append(i) 
 
 
-for  i, n  in enumerate(G):
-    orig = G.nodes[n]['club']    
-    prec = G.nodes[n]['com']
-    vec_orig_community.append(trans_orig[orig])
-    vec_pred_community.append(trans_pred[prec])
+v_orig, v_pred = util.convertToResultVec(G, communities, orig_lister_dic)
+nmi = normalized_mutual_info_score(v_orig , v_pred)
+acc = accuracy_score(v_orig , v_pred)
+ari = adjusted_rand_score(v_orig , v_pred)
+f_1_macro = f1_score(v_orig , v_pred, average='macro')
+f_1_micro = f1_score(v_orig , v_pred, average='micro')
+f_1_weighted = f1_score(v_orig , v_pred, average='weighted')
+print('Num original Community -> ', len(set(v_orig)))
+print('Num Predicted Community -> ', len(set(v_pred)))
+print('NMI -> %8.2f %% '%(nmi*100))
+print('ACC -> %8.2f %% '%(acc*100))
+print('ARI -> %8.2f '%(ari))
 
-nmi = normalized_mutual_info_score(vec_orig_community , vec_pred_community)
-acc = accuracy_score(vec_orig_community , vec_pred_community)
-print(nmi, acc)
+print('f1_macro -> %8.2f '%(f_1_macro))
+print('f1_micro -> %8.2f '%(f_1_micro))
+print('f1 -> %8.2f '%(f_1_weighted))
 
 
 

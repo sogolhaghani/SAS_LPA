@@ -26,14 +26,17 @@ def findSelectedNeigh(neighbors):
     return np.where( neighbors[:, 1] == x[index][0])[0][0] , x[index][2] / x[index][1]
 
 
-def asyn_lpa_communities(G, iter = 5):
+def asyn_lpa_communities(G, iter = 20, loggable = False):
     l = [[n, i, G.nodes[n]['weight']] for i, n in enumerate(G)]
-    
+    # l = [[n, i, G.nodes[n]['weight']] for i, n in enumerate(G)]   
     labels  = np.asarray(l)
     for i in range(0, iter):
-        print('\n Iteration %s \n ' %(i + 1))
+        if loggable:
+            print('\n Iteration %s \n ' %(i + 1))
         labels = labels[labels[:,2].argsort()[::-1]]
+        x = 0
         for node_info in labels:
+            x+=1
             neighbors = [   [n, 
                             labels[ np.where( labels[:, 0] ==n)[0][0]][1],  
                             labels[np.where( labels[:, 0] ==n)[0][0]][2] ] for n in G.neighbors(node_info[0]) 
@@ -41,16 +44,20 @@ def asyn_lpa_communities(G, iter = 5):
             if len(neighbors) == 0 :
                 continue
             selected_neigh , v = findSelectedNeigh(neighbors)
-            print('node %s ---> %s' %(node_info[0],  neighbors[selected_neigh][0]))
+            
 
             node_info[1] = neighbors[selected_neigh][1]
-            if node_info[2] > neighbors[selected_neigh][2]:
-                x =  np.where( labels[:, 0] ==neighbors[selected_neigh][0])[0][0]
-                labels[x][2] = np.average([v , node_info[2] ])
-            else:
-                node_info[2] = np.average([v , node_info[2] ])
-        for node_info in labels:
-            print('node %s, label %s, centrality : %s' %(node_info[0],node_info[1],node_info[2]))        
+
+            if loggable:
+                print('%s\t%s\t%s\t%8.2f' %(x,node_info[0] +1  ,  node_info[1]+ 1, node_info[2]))
+            # if node_info[2] > neighbors[selected_neigh][2]:
+            #     x =  np.where( labels[:, 0] ==neighbors[selected_neigh][0])[0][0]
+            #     labels[x][2] = np.average([v , node_info[2] ])
+            # else:
+            #     node_info[2] = np.average([v , node_info[2] ])
+        if loggable:    
+            for node_info in labels:
+                print('node %s, label %s, centrality : %s' %(node_info[0] + 1 ,node_info[1] + 1,node_info[2]))        
 
 
 

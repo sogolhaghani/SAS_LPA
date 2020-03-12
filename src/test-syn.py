@@ -34,7 +34,9 @@ for e in G.edges:
     # _score.update( {e : {'weight' : cosine_similarity([n_0_v] , [n_1_v])}})
     weight = (alpha) * simple_matching_coeffitient.SMC(n_0_v , n_1_v) + (1-alpha) *jaccard_score(n_0_v , n_1_v, average='weighted')
     _score.update( {e : {'weight' : weight}})
+    print('%s , %s\t%s\n'%(e[0] + 1 , e[1]+ 1,weight))
 nx.set_edge_attributes(G, _score)
+
 
 nodes_cent = LaplaceDynamic.lap_cent_weighted(G)
 dic_lc = {i : np.ceil(nodes_cent[i]) for i in nodes_cent }
@@ -64,10 +66,11 @@ print('f1 -> %8.2f '%(f_1_weighted))
 # partition = community.best_partition(G)
 
 
-pos = nx.spring_layout(G) #calculate position for each node
-nx.draw(G,pos, with_labels=True , font_weight='light', node_size= 280, width= 0.8, font_size= 'x-small', edgecolors=None)
+pos = nx.spring_layout(G, k=0.5) #calculate position for each node
+nx.draw(G,pos, with_labels=True , labels={n : i+1 for i, n in enumerate(G)}, font_weight='light', node_size= 280, width= 0.8, font_size= 'x-small', edgecolors=None)
 # nx.draw(G,pos, with_labels=True, labels=nx.get_node_attributes(G,'attr_vec') , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
-color_list = list(mcolors.CSS4_COLORS)
+# color_list = list(mcolors.CSS4_COLORS)
+color_list = ['darkorange', 'steelblue', 'hotpink']
 shuffle(color_list)
 i=0
 for x in communities:
