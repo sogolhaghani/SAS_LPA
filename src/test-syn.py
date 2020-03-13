@@ -32,9 +32,9 @@ for e in G.edges:
     n_1_v = G.nodes[e[1]]['attr_vec']
     # _score.update( {e : {'weight' : simple_matching_coeffitient.SMC(n_0_v , n_1_v)}})
     # _score.update( {e : {'weight' : cosine_similarity([n_0_v] , [n_1_v])}})
-    weight = (alpha) * simple_matching_coeffitient.SMC(n_0_v , n_1_v) + (1-alpha) *jaccard_score(n_0_v , n_1_v, average='weighted')
+    weight = (alpha) * simple_matching_coeffitient.SMC(n_0_v , n_1_v) + (1-alpha) *[p for u, v, p in nx.jaccard_coefficient(G, [e])][0]
     _score.update( {e : {'weight' : weight}})
-    print('%s , %s\t%s\n'%(e[0] + 1 , e[1]+ 1,weight))
+    # print('%s , %s\t%s\n'%(e[0] + 1 , e[1]+ 1,weight))
 nx.set_edge_attributes(G, _score)
 
 
@@ -50,6 +50,8 @@ ari = adjusted_rand_score(v_orig , v_pred)
 f_1_macro = f1_score(v_orig , v_pred, average='macro')
 f_1_micro = f1_score(v_orig , v_pred, average='micro')
 f_1_weighted = f1_score(v_orig , v_pred, average='weighted')
+mod = community.modularity(nx.get_node_attributes(G, 'com'),G)
+entropy = util.avg_entropy(v_pred, v_orig)
 
 print('\n RESULT')
 
@@ -62,8 +64,8 @@ print('ARI -> %8.2f '%(ari))
 print('f1_macro -> %8.2f '%(f_1_macro))
 print('f1_micro -> %8.2f '%(f_1_micro))
 print('f1 -> %8.2f '%(f_1_weighted))
-
-# partition = community.best_partition(G)
+print('Modularity ->  %8.2f' %mod)
+print('Entropy ->  %8.2f' %entropy)
 
 
 pos = nx.spring_layout(G, k=0.5) #calculate position for each node
