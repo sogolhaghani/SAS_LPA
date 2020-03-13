@@ -1,3 +1,29 @@
+import scipy.stats as stat
+import numpy as np
+
+
+def avg_entropy(predicted_labels, actual_labels):
+    actual_labels_dict = {}
+    predicted_labels_dict = {}
+    for label in np.unique(actual_labels):
+        actual_labels_dict[label] = np.nonzero(actual_labels==label)[0]
+    for label in np.unique(predicted_labels):
+        predicted_labels_dict[label] = np.nonzero(predicted_labels==label)[0]
+    avg_value = 0
+    N = len(predicted_labels)
+    # store entropy for each community
+    for label, items in predicted_labels_dict.items():
+        N_i = float(len(items))
+        p_i = []
+        for label2, items2  in actual_labels_dict.items():
+            common = set(items.tolist()).intersection(set(items2.tolist()))
+            p_ij = float(len(common))/ N_i
+            p_i.append(p_ij)
+        entropy_i = stat.entropy(p_i)
+        avg_value += entropy_i * (N_i / float(N))
+    return avg_value
+
+
 def intersection(lst1, lst2): 
     return [item for item in lst1 if item in lst2] 
 
