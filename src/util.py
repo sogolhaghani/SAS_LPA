@@ -21,7 +21,7 @@ def avg_entropy(predicted_labels, actual_labels):
             p_i.append(p_ij)
         entropy_i = stat.entropy(p_i)
         avg_value += entropy_i * (N_i / float(N))
-    return avg_value
+    return avg_value  
 
 
 def intersection(lst1, lst2): 

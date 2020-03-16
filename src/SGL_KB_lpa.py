@@ -5,6 +5,7 @@ import networkx as nx
 import random
 from scipy import stats
 import numpy as np
+import simple_matching_coeffitient
 
 def findSelectedNeigh(neighbors):
     x = np.array([neighbors[0][1], 1,neighbors[0][2] ], ndmin=2)
@@ -30,10 +31,11 @@ def asyn_lpa_communities(G, iter = 20, loggable = False):
     l = [[n, i, G.nodes[n]['weight']] for i, n in enumerate(G)]
     # l = [[n, i, G.nodes[n]['weight']] for i, n in enumerate(G)]   
     labels  = np.asarray(l)
+    labels = labels[labels[:,2].argsort()[::-1]]
     for i in range(0, iter):
         if loggable:
             print('\n Iteration %s \n ' %(i + 1))
-        labels = labels[labels[:,2].argsort()[::-1]]
+
         x = 0
         for node_info in labels:
             x+=1
@@ -58,6 +60,19 @@ def asyn_lpa_communities(G, iter = 20, loggable = False):
         if loggable:    
             for node_info in labels:
                 print('node %s, label %s, centrality : %s' %(node_info[0] + 1 ,node_info[1] + 1,node_info[2]))        
+    # x = np.array(labels[0], ndmin=2)
+    # for node_info in labels[1:]:
+    #     if node_info[1] not in x[:, 1]:
+    #         x =np.vstack([x, node_info])
+
+    # for node_info in labels:
+    #     _maxC = 0
+    #     _maxCoeff = 0
+    #     for head_info in x:
+    #         if simple_matching_coeffitient.SMC(G.nodes[node_info[0]]['attr_vec'],G.nodes[head_info[0]]['attr_vec']) > _maxCoeff:
+    #             _maxCoeff = simple_matching_coeffitient.SMC(G.nodes[node_info[0]]['attr_vec'],G.nodes[head_info[0]]['attr_vec'])
+    #             _maxC = head_info[1]
+    #     node_info[1] = _maxC
 
 
 
