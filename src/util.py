@@ -61,8 +61,17 @@ def convertToResultVec(G, communities, _orig_cluster_dic):
 
     vec_orig_community = []
     vec_pred_community = []
+    # save_file('community-original_node_in_cluster.txt',trans_orig)
+    # save_file('community-predicted_node_in_cluster.txt',trans_pred)
 
     for i, n  in enumerate(G):
         vec_orig_community.append(get_key(n, trans_orig))
         vec_pred_community.append(get_key(n, trans_pred))
     return vec_orig_community, vec_pred_community
+
+def save_file(file_name, _list):
+    with open(file_name, 'w') as filehandle:
+        if type(_list) is dict:
+            filehandle.writelines(("%s\n%s\n\n" %( place ,_list[place])) for place in _list)
+        else:
+            filehandle.writelines("%s\n" % place for place in _list)
