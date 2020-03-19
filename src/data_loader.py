@@ -50,7 +50,7 @@ def split_dataset(n_samples):
     return train_mask, eval_mask, test_mask
 
 
-def load_data(dataset='citeseer'):
+def load_data(dataset='cora'):
     names = ['x', 'y', 'tx', 'ty', 'allx', 'ally', 'graph']
     objects = []
     for i in range(len(names)):
