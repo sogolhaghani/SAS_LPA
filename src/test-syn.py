@@ -74,19 +74,19 @@ print('Modularity ->  %8.2f' %mod)
 print('Entropy ->  %8.2f' %entropy)
 
 
-pos = nx.spring_layout(G, k=0.5) #calculate position for each node
-nx.draw(G,pos, with_labels=True , labels={n : i+1 for i, n in enumerate(G)}, font_weight='light', node_size= 50, width= 0.5, font_size= 'xx-small', edgecolors=None)
-# nx.draw(G,pos, with_labels=True, labels=nx.get_node_attributes(G,'attr_vec') , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
-color_list = list(mcolors.CSS4_COLORS)
-# color_list = ['darkorange', 'steelblue', 'hotpink']
-shuffle(color_list)
-i=0
-for x in communities:
-    nx.draw_networkx_nodes(G,pos, nodelist=communities[x], node_color=color_list[i%len(color_list)])
-    i+=1
-# for i, n in enumerate(G): 
-#     x, y = pos[n]   
-#     plt.text(x,y+0.03,s=G.nodes[n]['attr_vec'], horizontalalignment='center')    
-plt.draw()
-plt.show()
+# pos = nx.spring_layout(G, k=0.5) #calculate position for each node
+# nx.draw(G,pos, with_labels=True , labels={n : i+1 for i, n in enumerate(G)}, font_weight='light', node_size= 50, width= 0.5, font_size= 'xx-small', edgecolors=None)
+# # nx.draw(G,pos, with_labels=True, labels=nx.get_node_attributes(G,'attr_vec') , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
+# color_list = list(mcolors.CSS4_COLORS)
+# # color_list = ['darkorange', 'steelblue', 'hotpink']
+# shuffle(color_list)
+# i=0
+# for x in communities:
+#     nx.draw_networkx_nodes(G,pos, nodelist=communities[x], node_color=color_list[i%len(color_list)])
+#     i+=1
+# # for i, n in enumerate(G): 
+# #     x, y = pos[n]   
+# #     plt.text(x,y+0.03,s=G.nodes[n]['attr_vec'], horizontalalignment='center')    
+# plt.draw()
+# plt.show()
 

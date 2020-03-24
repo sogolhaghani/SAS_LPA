@@ -18,21 +18,23 @@ def findSelectedNeigh(neighbors):
             t = np.array([node_info[1] , 1 , node_info[2]])
             x =np.vstack([x, t])
     
-    # if np.max(x[:,1]) == 1:
-    #     index = np.argmax(x[:,2])
-    # else:
-    #     index = np.argmax(x[:,1]) 
-    index = np.argmax(x[:,2])      
+    if np.max(x[:,1]) == 1:
+        index = np.argmax(x[:,2])
+        # index = random.choice(list(enumerate(x[:,0])))[0]
+    else:
+        index = np.argmax(x[:,1]) 
+    # index = np.argmax(x[:,2])      
     neighbors = np.array(neighbors)
     return np.where( neighbors[:, 1] == x[index][0])[0][0] , x[index][2] / x[index][1]
 
 
-def asyn_lpa_communities(G, iter = 20, loggable = False):
+def asyn_lpa_communities(G, iter = 50, loggable = False):
     l = [[n, i, G.nodes[n]['weight']] for i, n in enumerate(G)]
-    # l = [[n, i, G.nodes[n]['weight']] for i, n in enumerate(G)]   
     labels  = np.asarray(l)
-    labels = labels[labels[:,2].argsort()[::-1]]
+    # labels = labels[labels[:,2].argsort()[::1]]
+    # np.random.shuffle(labels)
     for i in range(0, iter):
+        np.random.shuffle(labels)     
         if loggable:
             print('\n Iteration %s \n ' %(i + 1))
 

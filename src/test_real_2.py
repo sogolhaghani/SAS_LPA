@@ -78,18 +78,33 @@ G = G.subgraph(GMax)
 print('number of nodes Max connected Component : ' , len(G.nodes))
 print('number of edges Max connected Component : ' , len(G.edges))
 
+# A_ori_copy = A_ori[list(G.nodes), :]
+# col = []
+# for i in range(0 ,A_ori_copy.shape[1] ):
+#     if sum(A_ori_copy[:,i]) > 0:
+#         col.append(i)
+# A_ori = A_ori[:, col]       
+# a_dic = {i : A_ori[i] for i in range(0, len(A_ori) ) }
+# nx.set_node_attributes(G, a_dic, 'attr_vec')
+
 # %% [markdown]
 # ## Calculate Node Similarity
 
 # %%
+
+test = list(nx.bridges(G))
 _score = {}
-alpha = 0
+alpha = 0.6
 for e in G.edges:
     n_0_v = G.nodes[e[0]]['attr_vec']
     n_1_v = G.nodes[e[1]]['attr_vec']
     # _score.update( {e : {'weight' : simple_matching_coeffitient.SMC(n_0_v , n_1_v)}})
     # _score.update( {e : {'weight' : cosine_similarity([n_0_v] , [n_1_v])}})
-    weight = (alpha) * simple_matching_coeffitient.SMC(n_0_v , n_1_v) + (1-alpha) *[p for u, v, p in nx.jaccard_coefficient(G, [e])][0]
+    # weight = (alpha) * cosine_similarity([n_0_v] , [n_1_v])[0] + (1-alpha) *[p for u, v, p in nx.jaccard_coefficient(G, [e])][0]
+    if simple_matching_coeffitient.SMC_1(n_0_v , n_1_v) == 0:
+        weight = 0# *[p for u, v, p in nx.jaccard_coefficient(G, [e])][0]
+    else :
+        weight = (alpha) * simple_matching_coeffitient.SMC_1(n_0_v , n_1_v) + (1-alpha) *[p for u, v, p in nx.jaccard_coefficient(G, [e])][0]
     _score.update( {e : {'weight' : weight}})
 nx.set_edge_attributes(G, _score)
 
@@ -99,7 +114,7 @@ nx.set_edge_attributes(G, _score)
 # %%
 # nodes_cent = laplacian_centrality.lap_cent_weighted(G)
 nodes_cent = LaplaceDynamic.lap_cent_weighted(G, norm=False)
-dic_lc = {i : np.ceil(nodes_cent[i]) for i in nodes_cent }
+dic_lc = {i : nodes_cent[i] for i in nodes_cent }
 nx.set_node_attributes(G, dic_lc, 'weight')
 G, communities =SGL_KB_lpa.asyn_lpa_communities(G)
 
@@ -136,14 +151,18 @@ print('Entropy ->  %8.2f' %entropy)
 # # ## Graph
 
 # pos = nx.spring_layout(G) #calculate position for each node
-# # nx.draw(G,pos, with_labels=True , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
-# nx.draw(G,pos, with_labels=True, labels=nx.get_node_attributes(G,'weight') , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
+# nx.draw(G,pos, with_labels=True , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
+# # nx.draw(G,pos, with_labels=True, labels=nx.get_node_attributes(G,'weight') , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
 # color_list = list(mcolors.CSS4_COLORS)
 # shuffle(color_list)
 # i=0
 # for x in communities:
 #     nx.draw_networkx_nodes(G,pos, nodelist=communities[x], node_color=color_list[i%len(color_list)])
 #     i+=1
+# for e in G.edges:
+#     x1, y1 = pos[e[0]]  
+#     x2, y2 = pos[e[1]]  
+#     plt.text((x1 + x2) /2,(y1 +y2)/2 ,s=np.ceil(G.edges[e]['weight']), horizontalalignment='center')       
 # plt.draw()
 # plt.show()
 

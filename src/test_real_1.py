@@ -23,6 +23,7 @@ from sklearn.metrics import jaccard_score
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.metrics import f1_score
 import community
+# from sklearn.preprocessing import scale
 
 # %% [markdown]
 # ## Choose data you would like to use
@@ -82,18 +83,21 @@ nx.set_node_attributes(G, a_dic, 'attr_vec')
 # # ## Calculate Node Similarity
 
 _score = {}
-alpha = 0.5
+alpha = 0.6
 for e in G.edges:
     n_0_v = G.nodes[e[0]]['attr_vec']
     n_1_v = G.nodes[e[1]]['attr_vec']
     # _score.update( {e : {'weight' : simple_matching_coeffitient.SMC(n_0_v , n_1_v)}})
     # _score.update( {e : {'weight' : cosine_similarity([n_0_v] , [n_1_v])}})
-    # if G.degree[e[0]] == 1 or G.degree[e[1]] == 1:
-    #     weight = 0.6* ( (alpha) * simple_matching_coeffitient.SMC(n_0_v , n_1_v) + (1-alpha) *[p for u, v, p in nx.jaccard_coefficient(G, [e])][0])
-    # else:
-    #     weight = (alpha) * simple_matching_coeffitient.SMC(n_0_v , n_1_v) + (1-alpha) *[p for u, v, p in nx.jaccard_coefficient(G, [e])][0]
-    weight = (alpha) * simple_matching_coeffitient.SMC(n_0_v , n_1_v) + (1-alpha) *[p for u, v, p in nx.jaccard_coefficient(G, [e])][0]
-    _score.update( {e : {'weight' : weight}})
+    if G.degree(e[1]) ==1 or G.degree(e[0])==1 :
+        weight = -1
+    elif simple_matching_coeffitient.SMC_1(n_0_v , n_1_v) == 0:
+        weight = 0
+    else :
+        weight = (alpha) * simple_matching_coeffitient.SMC_1(n_0_v , n_1_v) + (1-alpha) *[p for u, v, p in nx.jaccard_coefficient(G, [e])][0]
+    _score.update( {e : {'weight' :weight}})
+
+
 nx.set_edge_attributes(G, _score)
 
 # %% [markdown]
@@ -121,12 +125,12 @@ entropy = util.avg_entropy(v_pred, v_orig)
 print('Num original Community -> ', len(set(v_orig)))
 print('Num Predicted Community -> ', len(set(v_pred)))
 print('NMI -> %8.2f %% '%(nmi*100))
-# print('ACC -> %8.2f %% '%(acc*100))
-# print('ARI -> %8.2f '%(ari))
+print('ACC -> %8.2f %% '%(acc*100))
+print('ARI -> %8.2f '%(ari))
 
-# print('f1_macro -> %8.2f '%(f_1_macro))
-# print('f1_micro -> %8.2f '%(f_1_micro))
-# print('f1 -> %8.2f '%(f_1_weighted))
+print('f1_macro -> %8.2f '%(f_1_macro))
+print('f1_micro -> %8.2f '%(f_1_micro))
+print('f1 -> %8.2f '%(f_1_weighted))
 print('Modularity ->  %8.2f' %mod)
 print('Entropy ->  %8.2f' %entropy)
 
@@ -135,14 +139,21 @@ print('Entropy ->  %8.2f' %entropy)
 
 # %%
 # pos = nx.spring_layout(G) #calculate position for each node
-# # nx.draw(G,pos, with_labels=True , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
-# nx.draw(G,pos, with_labels=True, labels=nx.get_node_attributes(G,'weight') , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
+# nx.draw(G,pos, with_labels=True , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
+# # nx.draw(G,pos, with_labels=True, labels=nx.get_node_attributes(G,'weight') , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
 # color_list = list(mcolors.CSS4_COLORS)
 # shuffle(color_list)
 # i=0
 # for x in communities:
 #     nx.draw_networkx_nodes(G,pos, nodelist=communities[x], node_color=color_list[i%len(color_list)])
 #     i+=1
+# for e in G.nodes:
+#     x, y = pos[e]  
+#     plt.text(x,y+0.005 ,s=np.ceil(G.nodes[e]['weight']), horizontalalignment='center',fontdict={'size': 6})        
+# # for e in G.edges:
+# #     x1, y1 = po s[e[0]]  
+# #     x2, y2 = pos[e[1]]  
+# #     plt.text((x1 + x2) /2,(y1 +y2)/2 ,s=np.ceil(G.edges[e]['weight']), horizontalalignment='center')       
 # plt.draw()
 # plt.show()
 
