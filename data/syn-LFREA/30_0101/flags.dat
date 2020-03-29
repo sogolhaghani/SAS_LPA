@@ -1,0 +1,12 @@
+    -N 30
+    -k 5
+    -maxk 10
+    -mu 0.1
+    -t1 2
+    -t2 1
+    -minc 5
+    -maxc 10
+    -on 0
+    -om 0
+    -nattr 4
+    -ainf 1

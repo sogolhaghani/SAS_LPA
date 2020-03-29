@@ -30,9 +30,9 @@ def findSelectedNeigh(neighbors):
 def asyn_lpa_communities(G, iter = 5, loggable = False):
     l = [[n, i, G.nodes[n]['weight']] for i, n in enumerate(G)]
     labels  = np.asarray(l)
-    labels = labels[labels[:,2].argsort()[::1]]
+    # labels = labels[labels[:,2].argsort()[::1]]
     for i in range(0, iter):
-        # np.random.shuffle(labels)     
+        np.random.shuffle(labels)     
         if loggable:
             print('\n Iteration %s \n ' %(i + 1))
 

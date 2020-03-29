@@ -1,5 +1,7 @@
 import scipy.stats as stat
 import numpy as np
+import networkx as nx
+from math import log10 , log2
 
 
 def avg_entropy(predicted_labels, actual_labels):
@@ -75,3 +77,34 @@ def save_file(file_name, _list):
             filehandle.writelines(("%s\n%s\n\n" %( place ,_list[place])) for place in _list)
         else:
             filehandle.writelines("%s\n" % place for place in _list)
+
+
+def entropy_attr(graph, communities):
+    _sum = 0
+    _attr_dom = len(graph.nodes[0]['attr_vec'])
+    attr = nx.get_node_attributes(graph,'attr_vec')
+    attr_list = []
+    for x in attr:
+        attr_list.append(attr[x])
+    attr_list = np.array(attr_list)
+    domain =attr_list.max()
+    entropy_ck = 0
+    for _keyL in communities:
+        _sumA = 0
+        attr_Key = attr_list[np.array(communities[_keyL], int),:]
+        entropy_A_ck = 0
+        for i in range(0, _attr_dom):
+            ix = attr_Key[:,i]
+            entropy_ai_ck = 0
+            for _d in range(0, domain):
+                pKD  = len([i for i, x in enumerate(ix) if x == _d]) / len(ix)
+                if pKD > 0:
+                    entropy_ai_ck += pKD * log10(pKD)
+            entropy_ai_ck *=(-1)
+            entropy_A_ck += entropy_ai_ck
+        entropy_ck += entropy_A_ck * (len(communities[_keyL]) / len(graph))
+    print(entropy_ck)
+    
+
+
+

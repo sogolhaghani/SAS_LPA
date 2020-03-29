@@ -19,7 +19,7 @@ from datetime import datetime
 
 
 def preprocess_graph(miu, v):
-    f = './data/syn-LFREA/_1000_'
+    f = './data/syn-LFREA/1000_'
     G, orig_lister_dic = build_lfrea_attr.createAttrLFREA(base_path = f , miu=miu, v = v)
     GMax = max(nx.connected_components(G), key=len)
     G = G.subgraph(GMax)
@@ -38,7 +38,7 @@ def calculate_edge_weight(G):
         # if G.degree(e[1]) ==1 or G.degree(e[0])==1 :
         #     weight = -0.5
         # else :
-        weight = (alpha) * simple_matching_coeffitient.SMC_1(n_0_v , n_1_v) + (1-alpha) *[p for u, v, p in nx.jaccard_coefficient(G, [e])][0]
+        weight = (alpha) * simple_matching_coeffitient.SMC(n_0_v , n_1_v) + (1-alpha) *[p for u, v, p in nx.jaccard_coefficient(G, [e])][0]
         _score.update( {e : {'weight' :weight}})
     nx.set_edge_attributes(G, _score)
 
@@ -46,6 +46,7 @@ def calculate_node_weight(G):
     nodes_cent = LaplaceDynamic.lap_cent_weighted(G)
     dic_lc = {i : nodes_cent[i] for i in nodes_cent }
     nx.set_node_attributes(G, dic_lc, 'weight')
+    util.save_file('./out/30_lp_0.txt', dic_lc)
 
 def evaulate(v_orig, v_pred,time,miu,v, _save=False):
     nmi = normalized_mutual_info_score(v_orig , v_pred)
@@ -79,7 +80,8 @@ def evaulate(v_orig, v_pred,time,miu,v, _save=False):
 
 def drawGraph(G,communities):
     pos = nx.spring_layout(G) #calculate position for each node
-    nx.draw(G,pos, with_labels=True , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
+    nx.draw(G,pos, with_labels=False, node_size= 50, width= 0.1)
+    # nx.draw(G,pos, with_labels=True , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
     # nx.draw(G,pos, with_labels=True, labels=nx.get_node_attributes(G,'weight') , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
     color_list = list(mcolors.CSS4_COLORS)
     shuffle(color_list)
@@ -87,13 +89,13 @@ def drawGraph(G,communities):
     for x in communities:
         nx.draw_networkx_nodes(G,pos, nodelist=communities[x], node_color=color_list[i%len(color_list)])
         i+=1
-    for e in G.nodes:
-        x, y = pos[e]  
-        plt.text(x,y+0.005 ,s=G.nodes[e]['club'], horizontalalignment='center',fontdict={'size': 8})              
+    # for e in G.nodes:
+    #     x, y = pos[e]  
+    #     plt.text(x,y+0.005 ,s=G.nodes[e]['club'], horizontalalignment='center',fontdict={'size': 8})              
     plt.draw()
     plt.show()
 
-miu = '03'
+miu = '01'
 v = '01'
 G,orig_lister_dic = preprocess_graph(miu, v)
 now = datetime.now()
@@ -110,3 +112,4 @@ v_orig, v_pred = util.convertToResultVec(G, communities, orig_lister_dic)
 diff = datetime.now() - now
 evaulate(v_orig, v_pred, diff, miu, v, _save=False)
 # drawGraph(G, communities)
+util.entropy_attr(G,communities)
