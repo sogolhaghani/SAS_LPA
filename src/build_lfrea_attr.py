@@ -2,12 +2,10 @@ import pandas as pd
 import numpy as np
 import networkx as nx
 
-base_path =  '/home/sogol/py-workspace/community_detection_1/data/syn-LFREA/miu'
-miu = '01'
-def createAttrLFREA(base_path , miu ):  
-    edges = pd.read_csv((base_path+ miu +'/network.dat') , sep="	", header=None).to_numpy()
-    nodesAttrs = pd.read_csv((base_path+ miu +'/network_attributes.dat' ) , sep="  ", header=None).to_numpy()
-    communities = pd.read_csv((base_path+ miu +'/community.dat') , sep="	", header=None).to_numpy()
+def createAttrLFREA(base_path , miu, v ):  
+    edges = pd.read_csv((base_path+ miu + v +'/network.dat') , sep="	", header=None).to_numpy()
+    nodesAttrs = pd.read_csv((base_path+ miu+v +'/network_attributes.dat' ) , sep="  ", header=None).to_numpy()
+    communities = pd.read_csv((base_path+ miu+v +'/community.dat') , sep="	", header=None).to_numpy()
     
     adjustmentMatrix = np.zeros((np.amax(edges),np.amax(edges) ))
     for i in range(0, len(edges)):

@@ -68,6 +68,7 @@ G = G.subgraph(GMax)
 
 print('number of nodes Max connected Component : ' , len(G.nodes))
 print('number of edges Max connected Component : ' , len(G.edges))
+# print(nx.diameter(G))
 
 A_ori_copy = A_ori[list(G.nodes), :]
 col = []
@@ -91,8 +92,6 @@ for e in G.edges:
     # _score.update( {e : {'weight' : cosine_similarity([n_0_v] , [n_1_v])}})
     if G.degree(e[1]) ==1 or G.degree(e[0])==1 :
         weight = -1
-    elif simple_matching_coeffitient.SMC_1(n_0_v , n_1_v) == 0:
-        weight = 0
     else :
         weight = (alpha) * simple_matching_coeffitient.SMC_1(n_0_v , n_1_v) + (1-alpha) *[p for u, v, p in nx.jaccard_coefficient(G, [e])][0]
     _score.update( {e : {'weight' :weight}})
@@ -105,7 +104,7 @@ nx.set_edge_attributes(G, _score)
 
 # %%
 nodes_cent = LaplaceDynamic.lap_cent_weighted(G)
-dic_lc = {i : np.ceil(nodes_cent[i]) for i in nodes_cent }
+dic_lc = {i : nodes_cent[i] for i in nodes_cent }
 nx.set_node_attributes(G, dic_lc, 'weight')
 G, communities =SGL_KB_lpa.asyn_lpa_communities(G)
 
@@ -138,7 +137,7 @@ print('Entropy ->  %8.2f' %entropy)
 # ## Graph
 
 # %%
-# pos = nx.spring_layout(G) #calculate position for each node
+# pos = nx.spring_layout(G, weight=None) #calculate position for each node
 # nx.draw(G,pos, with_labels=True , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
 # # nx.draw(G,pos, with_labels=True, labels=nx.get_node_attributes(G,'weight') , font_weight='light', node_size= 280, width= 0.5, font_size= 'xx-small')
 # color_list = list(mcolors.CSS4_COLORS)
@@ -149,7 +148,7 @@ print('Entropy ->  %8.2f' %entropy)
 #     i+=1
 # for e in G.nodes:
 #     x, y = pos[e]  
-#     plt.text(x,y+0.005 ,s=np.ceil(G.nodes[e]['weight']), horizontalalignment='center',fontdict={'size': 6})        
+#     plt.text(x,y+0.005 ,s=G.nodes[e]['club'], horizontalalignment='center',fontdict={'size': 8})        
 # # for e in G.edges:
 # #     x1, y1 = po s[e[0]]  
 # #     x2, y2 = pos[e[1]]  
