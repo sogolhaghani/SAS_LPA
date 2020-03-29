@@ -31,7 +31,7 @@ def preprocess_graph(miu, v):
 
 def calculate_edge_weight(G):
     _score = {}
-    alpha = 1
+    alpha = 0
     for e in G.edges:
         n_0_v = G.nodes[e[0]]['attr_vec']
         n_1_v = G.nodes[e[1]]['attr_vec']
@@ -57,6 +57,8 @@ def evaulate(v_orig, v_pred,time,miu,v, _save=False):
     f_1_weighted = f1_score(v_orig , v_pred, average='weighted')
     mod = community.modularity(nx.get_node_attributes(G, 'com'),G)
     entropy = util.avg_entropy(v_pred, v_orig)
+    attr_entropy  = util.entropy_attr(G,communities)
+    _density  = util.density(G,communities)
     _result =[]
     _result.append('Num original Community\t\t%s'%(len(set(v_orig))))
     _result.append('Num Predicted Community\t\t%s' %(len(set(v_pred))))
@@ -68,6 +70,8 @@ def evaulate(v_orig, v_pred,time,miu,v, _save=False):
     _result.append('f1\t\t\t\t%1.4f '%(f_1_weighted))
     _result.append('Modularity\t\t\t%1.4f' %mod)
     _result.append('Entropy\t\t\t\t%1.4f' %entropy)
+    _result.append('Attribute Entropy\t\t%s' %attr_entropy)
+    _result.append('Density\t\t\t\t%s' %_density)
     _result.append('Time\t\t\t\t%s' %time)
     
     for x in _result:
@@ -112,4 +116,4 @@ v_orig, v_pred = util.convertToResultVec(G, communities, orig_lister_dic)
 diff = datetime.now() - now
 evaulate(v_orig, v_pred, diff, miu, v, _save=False)
 # drawGraph(G, communities)
-util.entropy_attr(G,communities)
+

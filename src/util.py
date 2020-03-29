@@ -103,7 +103,20 @@ def entropy_attr(graph, communities):
             entropy_ai_ck *=(-1)
             entropy_A_ck += entropy_ai_ck
         entropy_ck += entropy_A_ck * (len(communities[_keyL]) / len(graph))
-    print(entropy_ck)
+    return entropy_ck
+
+def density(graph, communities):
+    edge_ratio = 1 / len(graph.edges)
+    _sumC = 0
+    for _keyL in communities:
+        _edges = graph.edges(communities[_keyL],default=0)
+        _exact_edge = []
+        for e in _edges:
+            if e[0] in communities[_keyL] and e[1] in communities[_keyL]:
+                _exact_edge.append(e)
+        _sumC += len(_exact_edge)
+    return edge_ratio * _sumC
+
     
 
 
