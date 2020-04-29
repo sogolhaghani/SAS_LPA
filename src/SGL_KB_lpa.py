@@ -20,6 +20,8 @@ def findSelectedNeigh(neighbors):
     
     if np.max(x[:,1]) == 1:
         index = np.argmax(x[:,2])
+        # index = random.choice(list(enumerate(x)))[0]
+
     else:
         index = np.argmax(x[:,1]) 
     # index = np.argmax(x[:,2])      
@@ -27,7 +29,7 @@ def findSelectedNeigh(neighbors):
     return np.where( neighbors[:, 1] == x[index][0])[0][0]
 
 
-def asyn_lpa_communities(G, iter = 5, loggable = False):
+def asyn_lpa_communities(G, iter = 1, loggable = False):
     l = [[n, i, G.nodes[n]['weight']] for i, n in enumerate(G)]
     labels  = np.asarray(l)
     # labels = labels[labels[:,2].argsort()[::1]]
@@ -46,10 +48,7 @@ def asyn_lpa_communities(G, iter = 5, loggable = False):
             if len(neighbors) == 0 :
                 continue
             selected_neigh = findSelectedNeigh(neighbors)
-            
-
             node_info[1] = neighbors[selected_neigh][1]
-
             if loggable:
                 print('%s\t%s\t%s\t%8.2f' %(x,node_info[0] +1  ,  node_info[1]+ 1, node_info[2]))
         if loggable:    

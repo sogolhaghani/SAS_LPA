@@ -19,7 +19,7 @@ from datetime import datetime
 
 
 def preprocess_graph(miu, v):
-    f = './data/syn-LFREA/1000_'
+    f = './data/syn-LFREA/50000_'
     G, orig_lister_dic = build_lfrea_attr.createAttrLFREA(base_path = f , miu=miu, v = v)
     GMax = max(nx.connected_components(G), key=len)
     G = G.subgraph(GMax)
@@ -31,7 +31,7 @@ def preprocess_graph(miu, v):
 
 def calculate_edge_weight(G):
     _score = {}
-    alpha = 0
+    alpha = 0.5
     for e in G.edges:
         n_0_v = G.nodes[e[0]]['attr_vec']
         n_1_v = G.nodes[e[1]]['attr_vec']
@@ -46,7 +46,7 @@ def calculate_node_weight(G):
     nodes_cent = LaplaceDynamic.lap_cent_weighted(G)
     dic_lc = {i : nodes_cent[i] for i in nodes_cent }
     nx.set_node_attributes(G, dic_lc, 'weight')
-    util.save_file('./out/30_lp_0.txt', dic_lc)
+    util.save_file('./out/1000_lp_1.txt', dic_lc)
 
 def evaulate(v_orig, v_pred,time,miu,v, _save=False):
     nmi = normalized_mutual_info_score(v_orig , v_pred)
@@ -65,8 +65,8 @@ def evaulate(v_orig, v_pred,time,miu,v, _save=False):
     _result.append('NMI\t\t\t\t%1.4f '%(nmi))
     _result.append('ACC\t\t\t\t%1.4f '%(acc))
     _result.append('ARI\t\t\t\t%1.4f'%(ari))
-    _result.append('f1_macro\t\t\t%1.4f '%(f_1_macro))
-    _result.append('f1_micro\t\t\t%1.4f '%(f_1_micro))
+    # _result.append('f1_macro\t\t\t%1.4f '%(f_1_macro))
+    # _result.append('f1_micro\t\t\t%1.4f '%(f_1_micro))
     _result.append('f1\t\t\t\t%1.4f '%(f_1_weighted))
     _result.append('Modularity\t\t\t%1.4f' %mod)
     _result.append('Entropy\t\t\t\t%1.4f' %entropy)
@@ -78,7 +78,7 @@ def evaulate(v_orig, v_pred,time,miu,v, _save=False):
         print(x)
 
     if _save is True:
-        util.save_file('./out/10000_'+miu+v+'.txt', _result)
+        util.save_file('./out/1000_'+miu+v+'.txt', _result)
 
 
 

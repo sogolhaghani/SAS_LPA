@@ -7,7 +7,7 @@ def createAttrLFREA(base_path , miu, v ):
     nodesAttrs = pd.read_csv((base_path+ miu+v +'/network_attributes.dat' ) , sep="  ", header=None).to_numpy()
     communities = pd.read_csv((base_path+ miu+v +'/community.dat') , sep="	", header=None).to_numpy()
     
-    adjustmentMatrix = np.zeros((np.amax(edges),np.amax(edges) ))
+    adjustmentMatrix = np.zeros((np.amax(edges),np.amax(edges) ), dtype=np.float16)
     for i in range(0, len(edges)):
         adjustmentMatrix[(edges[i][0] -1 ) ,(edges[i][1] -1) ] = 1
 
